@@ -51,32 +51,32 @@ function runTest(dataName) {
 
 	Promise.all([
 		createBrokers("Fake"),
-		createBrokers("NATS"),
-		createBrokers("Redis"),
-		createBrokers("MQTT"),
-		createBrokers("amqp://192.168.51.29:5672")
+    //createBrokers("NATS"),
+    createBrokers("Redis"),
+    //createBrokers("MQTT"),
+		createBrokers("amqp://rabbitmq:rabbitmq@localhost")
 	]).delay(1000).then(([
 		[fake1, fake2],
-		[nats1, nats2],
-		[redis1, redis2],
-		[mqtt1, mqtt2],
+    //[nats1, nats2],
+    [redis1, redis2],
+    //[mqtt1, mqtt2],
 		[amqp1, amqp2],
 	]) => {
 		bench.ref("Fake", done => {
 			return fake1.call("echo.reply", payload).then(done);
 		});
 
-		bench.add("NATS", done => {
-			return nats1.call("echo.reply", payload).then(done);
-		});
-
 		bench.add("Redis", done => {
 			return redis1.call("echo.reply", payload).then(done);
 		});
 
+    /*bench.add("NATS", done => {
+			return nats1.call("echo.reply", payload).then(done);
+		});
+
 		bench.add("MQTT", done => {
 			return mqtt1.call("echo.reply", payload).then(done);
-		});
+    });*/
 
 		bench.add("AMQP", done => {
 			return amqp1.call("echo.reply", payload).then(done);
@@ -87,14 +87,14 @@ function runTest(dataName) {
 				fake1.stop(),
 				fake2.stop(),
 
-				nats1.stop(),
-				nats2.stop(),
-
 				redis1.stop(),
 				redis2.stop(),
 
+        /*nats1.stop(),
+				nats2.stop(),
+
 				mqtt1.stop(),
-				mqtt2.stop(),
+        mqtt2.stop(),*/
 
 				amqp1.stop(),
 				amqp2.stop()
